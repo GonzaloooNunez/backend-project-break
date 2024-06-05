@@ -1,0 +1,28 @@
+{
+  "name": "backend-project-break",
+  "version": "1.0.0",
+  "description": "tienda de ropa con un catálogo de productos y un dashboard",
+  "main": "./api/index.js",
+  "scripts": {
+    "start": "node ./api/index.js",
+    "dev": "node --watch ./api/index.js",
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "firebase": "^10.12.2",
+    "firebase-admin": "^12.1.1",
+    "method-override": "^3.0.0",
+    "mongodb": "^6.7.0",
+    "mongoose": "^8.4.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.2"
+  }
+}
