@@ -3,11 +3,11 @@ const Product = require("../models/Product");
 const showProducts = async (req, res) => {
   try {
     const products = await Product.find();
-    const productCards = getProductCards(products);
-    const html = baseHtml + getNavBar() + productCards;
-    res.send(html);
+    res.json(products);
   } catch (err) {
-    res.status(500).send("Server Error, no se pueden mostrar los productos");
+    res
+      .status(500)
+      .json({ error: "Server Error, no se pueden mostrar los productos" });
   }
 };
 
@@ -25,9 +25,9 @@ const showProductById = async (req, res) => {
 const showProductByCategory = async (req, res) => {
   const category = req.query.category;
   const products = await Product.findBy({ category });
-  res.send(products)
 
-}
+  res.send(products);
+};
 
 const showNewProduct = (req, res) => {
   const html = baseHtml + getNavBar() + getNewProductForm();
@@ -36,8 +36,6 @@ const showNewProduct = (req, res) => {
 
 const createProduct = async (req, res) => {
   try {
-    console.log("hola !", req.req);
-
     const newProduct = new Product(req.body);
     await newProduct.validate();
     await newProduct.save();
@@ -155,4 +153,5 @@ module.exports = {
   showEditProduct,
   updateProduct,
   deleteProduct,
+  showProductByCategory,
 };
