@@ -1,4 +1,4 @@
-const firebaseAdmin = require("firebase-admin");
+/* const firebaseAdmin = require("firebase-admin");
 
 const authMiddleware = (req, res, next) => {
   // Comprobar si la sesión contiene un usuario autenticado
@@ -10,4 +10,4 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
-module.exports = authMiddleware;
+module.exports = authMiddleware; */

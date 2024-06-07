@@ -1,9 +1,23 @@
-const admin = require("firebase-admin");
-const serviceAccount = require("./path-to-serviceAccountKey.json");
+/* // Importa Firebase
+const { initializeApp } = require("firebase/app");
+const { getFirestore } = require("firebase/firestore");
+const { getAuth } = require("firebase/auth");
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://your-database-name.firebaseio.com", // PONER MI DATABASE !!
-});
+// Configuración de Firebase (reemplaza estos valores con tus credenciales)
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  appId: "YOUR_APP_ID",
+};
 
-module.exports = admin;
+// Inicializa Firebase
+const app = initializeApp(firebaseConfig);
+
+// Exporta las instancias de Firestore y Auth
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+module.exports = { db, auth }; */

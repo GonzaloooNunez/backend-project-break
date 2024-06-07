@@ -1,157 +1,149 @@
 const Product = require("../models/Product");
+const { baseHtml, endHtml } = require("../middlewares/htmlTemplates");
+
+function getNavBar(isDashboard = false) {
+  return `
+  <nav>
+    <a href="/products">Home</a>
+    ${isDashboard ? '<a href="/dashboard/new">Add New Product</a>' : ""}
+  </nav>
+  `;
+}
+
+function getProductCards(products) {
+  let html = "";
+  products.forEach((product) => {
+    html += `
+    <li class="product-card">
+      <img src="${product.image}" alt="${product.name}">
+      <h2>${product.name}</h2>
+      <p>${product.description}</p>
+      <p>${product.price}€</p>
+      <a href="/products/${product._id}">Ver detalle</a>
+      <form action="/dashboard/${product._id}/delete?_method=DELETE" method="POST">
+        <button type="submit">Eliminar</button>
+      </form>
+      <a href="/dashboard/${product._id}/edit"><button>Editar</button></a>
+    </li>
+    `;
+  });
+  return html;
+}
 
 const showProducts = async (req, res) => {
-  try {
-    const products = await Product.find();
-    res.json(products);
-  } catch (err) {
-    res
-      .status(500)
-      .json({ error: "Server Error, no se pueden mostrar los productos" });
+  const category = req.query.category;
+  let products;
+
+  if (category) {
+    products = await Product.find({ category });
+  } else {
+    products = await Product.find();
   }
+
+  const productCards = getProductCards(products);
+  const html = baseHtml + productCards + endHtml;
+  res.send(html);
 };
 
 const showProductById = async (req, res) => {
-  try {
-    const product = await Product.findById(req.params.productId);
-    const productDetail = getProductDetail(product);
-    const html = baseHtml + getNavBar() + productDetail;
-    res.send(html);
-  } catch (err) {
-    res.status(500).send("Server Error, no se puede mostrar su producto");
-  }
+  const product = await Product.findById(req.params.productId);
+  const html =
+    baseHtml +
+    getNavBar() +
+    `
+    <div class="product-detail">
+      <img src="${product.image}" alt="${product.name}">
+      <h2>${product.name}</h2>
+      <p>${product.description}</p>
+      <p>${product.price}€</p>
+    </div>
+  </body></html>`;
+  res.send(html);
 };
 
-const showProductByCategory = async (req, res) => {
-  const category = req.query.category;
-  const products = await Product.findBy({ category });
-
-  res.send(products);
+const showDashboard = async (req, res) => {
+  const products = await Product.find();
+  const productCards = getProductCards(products, true);
+  const html = baseHtml + getNavBar(true) + productCards + "</body></html>";
+  res.send(html);
 };
 
 const showNewProduct = (req, res) => {
-  const html = baseHtml + getNavBar() + getNewProductForm();
+  const html =
+    baseHtml +
+    getNavBar(true) +
+    `
+    <form action="/dashboard" method="POST">
+      <input type="text" name="name" placeholder="Name" required>
+      <input type="text" name="description" placeholder="Description" required>
+      <input type="text" name="image" placeholder="Image URL" required>
+      <input type="text" name="category" placeholder="Category" required>
+      <input type="text" name="size" placeholder="Size" required>
+      <input type="number" name="price" placeholder="Price" required>
+      <button type="submit">Add Product</button>
+    </form>
+  </body></html>`;
   res.send(html);
 };
 
 const createProduct = async (req, res) => {
-  try {
-    const newProduct = new Product(req.body);
-    await newProduct.validate();
-    await newProduct.save();
-
-    res.send(newProduct);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server Error, no se ha podido crear su producto");
-  }
+  const { name, description, image, category, size, price } = req.body;
+  const product = new Product({
+    name,
+    description,
+    image,
+    category,
+    size,
+    price,
+  });
+  await product.save();
+  res.redirect("/dashboard");
 };
 
 const showEditProduct = async (req, res) => {
-  try {
-    const product = await Product.findById(req.params.productId);
-    const editForm = getEditProductForm(product);
-    const html = baseHtml + getNavBar() + editForm;
-    res.send(html);
-  } catch (err) {
-    res.status(500).send("Server Error");
-  }
+  const product = await Product.findById(req.params.productId);
+  const html =
+    baseHtml +
+    getNavBar(true) +
+    `
+    <form action="/dashboard/${product._id}?_method=PUT" method="POST">
+      <input type="text" name="name" value="${product.name}" required>
+      <input type="text" name="description" value="${product.description}" required>
+      <input type="text" name="image" value="${product.image}" required>
+      <input type="text" name="category" value="${product.category}" required>
+      <input type="text" name="size" value="${product.size}" required>
+      <input type="number" name="price" value="${product.price}" required>
+      <button type="submit">Update Product</button>
+    </form>
+  </body></html>`;
+  res.send(html);
 };
 
 const updateProduct = async (req, res) => {
-  try {
-    await Product.findByIdAndUpdate(req.params.productId, req.body);
-    res.redirect("/dashboard");
-  } catch (err) {
-    res.status(500).send("Server Error, no se pudo actualizar el producto");
-  }
+  const { name, description, image, category, size, price } = req.body;
+  await Product.findByIdAndUpdate(req.params.productId, {
+    name,
+    description,
+    image,
+    category,
+    size,
+    price,
+  });
+  res.redirect("/dashboard");
 };
 
 const deleteProduct = async (req, res) => {
-  try {
-    await Product.findByIdAndDelete(req.params.productId);
-    res.redirect("/dashboard");
-  } catch (err) {
-    res.status(500).send("Server Error, no se pudo borrar el producto");
-  }
+  await Product.findByIdAndDelete(req.params.productId);
+  res.redirect("/dashboard");
 };
-
-const getProductCards = (products) => {
-  let html = "";
-  for (let product of products) {
-    html += `
-      <div class="product-card">
-        <img src="${product.image}" alt="${product.name}">
-        <h2>${product.name}</h2>
-        <p>${product.description}</p>
-        <p>${product.price}€</p>
-        <a href="/products/${product._id}">Ver detalle</a>
-      </div>
-    `;
-  }
-  return html;
-};
-
-const baseHtml = `
-  <!DOCTYPE html>
-  <html>
-  <head>
-    <link rel="stylesheet" type="text/css" href="/styles.css">
-  </head>
-  <body>
-`;
-
-const getNavBar = () => `
-  <nav>
-    <a href="/products">Productos</a>
-    <a href="/dashboard/new">Nuevo Producto</a>
-  </nav>
-`;
-
-const getProductDetail = (product) => `
-  <div class="product-detail">
-    <img src="${product.image}" alt="${product.name}">
-    <h2>${product.name}</h2>
-    <p>${product.description}</p>
-    <p>${product.price}€</p>
-    <a href="/dashboard/${product._id}/edit">Editar</a>
-    <form action="/dashboard/${product._id}/delete" method="POST">
-      <button type="submit">Eliminar</button>
-    </form>
-  </div>
-`;
-
-const getNewProductForm = () => `
-  <form action="/dashboard" method="POST">
-    <input type="text" name="name" placeholder="Nombre">
-    <textarea name="description" placeholder="Descripción"></textarea>
-    <input type="text" name="image" placeholder="Imagen URL">
-    <input type="text" name="category" placeholder="Categoría">
-    <input type="text" name="size" placeholder="Talla">
-    <input type="number" name="price" placeholder="Precio">
-    <button type="submit">Crear</button>
-  </form>
-`;
-
-const getEditProductForm = (product) => `
-  <form action="/dashboard/${product._id}?_method=PUT" method="POST">
-    <input type="text" name="name" value="${product.name}" placeholder="Nombre">
-    <textarea name="description" placeholder="Descripción">${product.description}</textarea>
-    <input type="text" name="image" value="${product.image}" placeholder="Imagen URL">
-    <input type="text" name="category" value="${product.category}" placeholder="Categoría">
-    <input type="text" name="size" value="${product.size}" placeholder="Talla">
-    <input type="number" name="price" value="${product.price}" placeholder="Precio">
-    <button type="submit">Actualizar</button>
-  </form>
-`;
 
 module.exports = {
   showProducts,
   showProductById,
+  showDashboard,
   showNewProduct,
   createProduct,
   showEditProduct,
   updateProduct,
   deleteProduct,
-  showProductByCategory,
 };

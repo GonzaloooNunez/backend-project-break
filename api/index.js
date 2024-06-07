@@ -1,31 +1,32 @@
 const express = require("express");
-const connectDB = require("./config/db");
-const productRoutes = require("./routes/productRoutes");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+const bodyParser = require("body-parser");
 const methodOverride = require("method-override");
-var cors = require("cors");
+const productRoutes = require("./routes/productRoutes");
 
-require("dotenv").config();
+dotenv.config();
 
 const app = express();
+mongoose
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("DB connected"))
+  .catch((err) => console.log(err));
 
-connectDB();
-app.use(cors());
-
-// Middlewares
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
-
-// Métodos HTTP PUT y DELETE
-
 app.use(methodOverride("_method"));
 
-// Rutas
-app.use(productRoutes);
+app.get("/", (req, res) => {
+  res.redirect("/products");
+});
+app.use("/products", productRoutes);
 
-const PORT = process.env.PORT || 5001;
+const port = process.env.PORT || 5001;
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT} http://localhost:${PORT}`);
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });
