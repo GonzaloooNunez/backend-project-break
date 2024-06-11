@@ -1,8 +1,6 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-const User = require("../models/User");
 const users = require("../data/users"); // Asegúrate de tener un modelo de usuario
-const authMiddleware = require("../middlewares/authMiddleware");
 const saltRounds = 10;
 
 const secretKey = process.env.SECRET_KEY;
@@ -85,32 +83,6 @@ const showLoginForm = (req, res) => {
   `);
 };
 
-/* const register = async (req, res) => {
-  const { username, password, name, rol } = req.body;
-
-  try {
-    // Encripta la contraseña
-    const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-    // Crea un nuevo usuario
-    const newUser = {
-      id: users.length + 1, // Asume que el id es incremental
-      username: username,
-      password: hashedPassword,
-      name: name,
-      rol: rol,
-    };
-
-    // Agrega el nuevo usuario al array de usuarios (en un entorno real, esto debería guardarse en una base de datos)
-    users.push(newUser);
-
-    // Responde con un mensaje de éxito
-    res.status(201).send("Usuario registrado con éxito");
-  } catch (err) {
-    res.status(500).send("Error del servidor");
-  }
-}; */
-
 const login = async (req, res) => {
   const { username, password } = req.body;
 
@@ -132,9 +104,9 @@ const login = async (req, res) => {
     const token = jwt.sign({ id: user.id }, process.env.SECRET_KEY, {
       expiresIn: "1h",
     });
-    console.log(token);
+
     res.cookie("token", token, { httpOnly: true });
-    res.redirect("/products"); // Redirige a la página deseada después de login
+    res.redirect("/dashboard"); // Redirige a la página deseada después de login
   } catch (err) {
     res.status(500).send("Error del servidor");
   }

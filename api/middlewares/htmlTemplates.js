@@ -48,6 +48,26 @@ const baseHtml = `
   list-style:none;
 }
 
+.header-list li a {
+  display: block;
+  padding: 5px 10px;
+  text-decoration: none;
+  color: #fff;
+  background-color: #444;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.header-list li:last-child a {
+  background-color: transparent;
+  padding: 0;
+}
+
+.header-list li img{
+  width:30px;
+  height:30px;
+}
+
 
 .content {
   margin-top: 100px; /* Aumentamos este valor para separar más el contenido del header */
@@ -184,7 +204,7 @@ height: 400px;
         <li><a href="/products?category=Pantalones">Pantalones</a></li>
         <li><a href="/products?category=Zapatos">Zapatos</a></li>
         <li><a href="/products?category=Accesorios">Accesorios</a></li>
-        <li><a href="/login">Login</a></li>
+        <li><a href="/login"><img src="https://cdn-icons-png.flaticon.com/256/7381/7381253.png" alt="Login"></a></li>
       </ul>
     </nav>
   </header>

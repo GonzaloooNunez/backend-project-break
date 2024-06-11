@@ -3,7 +3,6 @@ const secretKey = process.env.SECRET_KEY;
 
 const authenticateJWT = (req, res, next) => {
   const token = req.cookies.token;
-
   if (!token) {
     return res.status(403).send("Acceso denegado");
   }

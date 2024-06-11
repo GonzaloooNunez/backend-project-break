@@ -2,17 +2,22 @@ const Product = require("../models/Product");
 const { baseHtml, endHtml } = require("../middlewares/htmlTemplates");
 
 function getNavBar(isDashboard = false) {
+  const linkStyle =
+    "display: block; padding: 8px 20px; text-decoration: none; color: #fff; background-color: #007bff; border-radius: 5px; margin-bottom: 10px;";
+
   return `
-  <nav>
-    <a href="/products">Home</a> <br></br>
-    ${
-      isDashboard ? '<br></br><a href="/dashboard/new">Add New Product</a>' : ""
-    }
-  </nav>
+    <nav style="padding: 10px 0; display: flex; flex-direction: column; align-items: flex-start;">
+      <a href="/products" style="${linkStyle}">Home</a>
+      ${
+        isDashboard
+          ? `<a href="/dashboard/new" style="${linkStyle}">Add New Product</a>`
+          : ""
+      }
+    </nav>
   `;
 }
 
-function getProductCards(products) {
+function getProductCardsAdmin(products) {
   let html = "";
   products.forEach((product) => {
     html += `
@@ -30,6 +35,22 @@ function getProductCards(products) {
       <a href="/dashboard/${product._id}/edit"><button class="btn btn-edit">
                     <i class="fas fa-pencil-alt"></i>
                 </button></a>
+    </li>
+    `;
+  });
+  return html;
+}
+
+function getProductCards(products) {
+  let html = "";
+  products.forEach((product) => {
+    html += `
+    <li class="product-card">
+      <img src="${product.image}" alt="${product.name}">
+      <h2>${product.name}</h2>
+      <p>${product.description}</p>
+      <p>${product.price}€</p>
+      <a href="/products/${product._id}">Ver detalle</a>
     </li>
     `;
   });
@@ -68,7 +89,7 @@ const showProductById = async (req, res) => {
 
 const showDashboard = async (req, res) => {
   const products = await Product.find();
-  const productCards = getProductCards(products, true);
+  const productCards = getProductCardsAdmin(products, true);
   const html = baseHtml + getNavBar(true) + productCards + "</body></html>";
   res.send(html);
 };
@@ -111,16 +132,17 @@ const showEditProduct = async (req, res) => {
     baseHtml +
     getNavBar(true) +
     `<br></br>
-    <form action="/dashboard/${product._id}?_method=PUT" method="POST">
-      <input type="text" name="name" value="${product.name}" required>
-      <input type="text" name="description" value="${product.description}" required>
-      <input type="text" name="image" value="${product.image}" required>
-      <input type="text" name="category" value="${product.category}" required>
-      <input type="text" name="size" value="${product.size}" required>
-      <input type="number" name="price" value="${product.price}" required>
-      <button type="submit">Update Product</button>
-    </form>
-  </body></html>`;
+      <div style="display: ; justify-content: center; align-items: center; height: 100vh; margin-left:400px ;margin-top:100px; ">
+      <form action="/dashboard/${product._id}?_method=PUT" method="POST" style="background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); width: 300px;">
+        <input type="text" name="name" placeholder="Nombre del Producto" value="${product.name}" style="display: block; margin-bottom: 15px; padding: 10px; width: 100%; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" required>
+        <input type="text" name="description" placeholder="Descripción del Producto" value="${product.description}" style="display: block; margin-bottom: 15px; padding: 10px; width: 100%; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" required>
+        <input type="text" name="image" placeholder="URL de la Imagen" value="${product.image}" style="display: block; margin-bottom: 15px; padding: 10px; width: 100%; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" required>
+        <input type="text" name="category" placeholder="Categoría" value="${product.category}" style="display: block; margin-bottom: 15px; padding: 10px; width: 100%; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" required>
+        <input type="text" name="size" placeholder="Tamaño" value="${product.size}" style="display: block; margin-bottom: 15px; padding: 10px; width: 100%; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" required>
+        <input type="number" name="price" placeholder="Precio" value="${product.price}" style="display: block; margin-bottom: 15px; padding: 10px; width: 100%; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" required>
+        <button type="submit" style="background-color: #4CAF50; color: white; border: none; cursor: pointer; display: block; width: 100%; padding: 10px; border-radius: 5px;">Actualizar Producto</button>
+      </form>
+    </div>`;
   res.send(html);
 };
 

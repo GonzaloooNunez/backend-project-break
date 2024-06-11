@@ -1,43 +1,43 @@
-const express = require("express");
-const mongoose = require("mongoose");
 const dotenv = require("dotenv");
+dotenv.config();
+
+const express = require("express");
 const bodyParser = require("body-parser");
 const methodOverride = require("method-override");
 const cookieParser = require("cookie-parser");
-const helmet = require("helmet");
 
-const productRoutes = require("./routes/productRoutes");
+const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
-const authenticateJWT = require("./middlewares/authMiddleware");
+const productRoutes = require("./routes/productRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
 
-dotenv.config();
+async function main() {
+  await connectDB();
+  const app = express();
 
-const app = express();
-mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("DB connected"))
-  .catch((err) => console.log(err));
+  app.use(bodyParser.urlencoded({ extended: true }));
+  app.use(express.static("public"));
+  app.use(methodOverride("_method"));
+  app.use(cookieParser());
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static("public"));
-app.use(methodOverride("_method"));
-app.use(cookieParser());
+  app.get("/", (_req, res) => res.redirect("/products"));
 
-app.get("/", (req, res) => {
-  res.redirect("/products");
-});
+  // Proteger rutas que requieren autenticación
 
-// Proteger rutas que requieren autenticación
-app.use("/dashboard", authenticateJWT);
+  //localhost:PORT/dashboard
+  app.use("/dashboard", dashboardRoutes);
 
-app.use("/products", productRoutes);
-app.use("/login", authRoutes);
+  //localhost:PORT/products
+  app.use("/products", productRoutes);
 
-const port = process.env.PORT || 5001;
+  //localhost:PORT/login
+  app.use("/login", authRoutes);
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+  const port = process.env.PORT || 5001;
+
+  app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
+}
+
+main();
