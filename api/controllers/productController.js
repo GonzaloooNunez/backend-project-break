@@ -4,8 +4,10 @@ const { baseHtml, endHtml } = require("../middlewares/htmlTemplates");
 function getNavBar(isDashboard = false) {
   return `
   <nav>
-    <a href="/products">Home</a>
-    ${isDashboard ? '<a href="/dashboard/new">Add New Product</a>' : ""}
+    <a href="/products">Home</a> <br></br>
+    ${
+      isDashboard ? '<br></br><a href="/dashboard/new">Add New Product</a>' : ""
+    }
   </nav>
   `;
 }
@@ -21,9 +23,13 @@ function getProductCards(products) {
       <p>${product.price}€</p>
       <a href="/products/${product._id}">Ver detalle</a>
       <form action="/dashboard/${product._id}/delete?_method=DELETE" method="POST">
-        <button type="submit">Eliminar</button>
+          <button class="btn btn-delete">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
       </form>
-      <a href="/dashboard/${product._id}/edit"><button>Editar</button></a>
+      <a href="/dashboard/${product._id}/edit"><button class="btn btn-edit">
+                    <i class="fas fa-pencil-alt"></i>
+                </button></a>
     </li>
     `;
   });
@@ -49,7 +55,6 @@ const showProductById = async (req, res) => {
   const product = await Product.findById(req.params.productId);
   const html =
     baseHtml +
-    getNavBar() +
     `
     <div class="product-detail">
       <img src="${product.image}" alt="${product.name}">
@@ -105,7 +110,7 @@ const showEditProduct = async (req, res) => {
   const html =
     baseHtml +
     getNavBar(true) +
-    `
+    `<br></br>
     <form action="/dashboard/${product._id}?_method=PUT" method="POST">
       <input type="text" name="name" value="${product.name}" required>
       <input type="text" name="description" value="${product.description}" required>

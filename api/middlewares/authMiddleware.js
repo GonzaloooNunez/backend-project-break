@@ -1,13 +1,20 @@
-/* const firebaseAdmin = require("firebase-admin");
+const jwt = require("jsonwebtoken");
+const secretKey = process.env.SECRET_KEY;
 
-const authMiddleware = (req, res, next) => {
-  // Comprobar si la sesión contiene un usuario autenticado
-  if (req.session && req.session.user) {
-    next(); // El usuario está autenticado, continuar a la siguiente función
-  } else {
-    // Si no hay un usuario en la sesión, redirigir al formulario de login
-    res.redirect("/login");
+const authenticateJWT = (req, res, next) => {
+  const token = req.cookies.token;
+
+  if (!token) {
+    return res.status(403).send("Acceso denegado");
+  }
+
+  try {
+    const decoded = jwt.verify(token, secretKey);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    return res.status(403).send("Acceso denegado");
   }
 };
 
-module.exports = authMiddleware; */
+module.exports = authenticateJWT;
