@@ -27,6 +27,7 @@ function getProductCardsAdmin(products) {
       <p>${product.description}</p>
       <p>${product.price}€</p>
       <a href="/products/${product._id}">Ver detalle</a>
+      <div class="btn-container">
       <form action="/dashboard/${product._id}/delete?_method=DELETE" method="POST">
           <button class="btn btn-delete">
                     <i class="fas fa-trash-alt"></i>
@@ -35,6 +36,7 @@ function getProductCardsAdmin(products) {
       <a href="/dashboard/${product._id}/edit"><button class="btn btn-edit">
                     <i class="fas fa-pencil-alt"></i>
                 </button></a>
+      </div>
     </li>
     `;
   });
@@ -132,15 +134,15 @@ const showEditProduct = async (req, res) => {
     baseHtml +
     getNavBar(true) +
     `<br></br>
-      <div style="display: ; justify-content: center; align-items: center; height: 100vh; margin-left:400px ;margin-top:100px; ">
+      <div style="display: ; justify-content: center; align-items: center; height: 100vh; margin-left: -170px ;margin-top:100px; width: 500px; ">
       <form action="/dashboard/${product._id}?_method=PUT" method="POST" style="background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); width: 300px;">
-        <input type="text" name="name" placeholder="Nombre del Producto" value="${product.name}" style="display: block; margin-bottom: 15px; padding: 10px; width: 100%; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" required>
-        <input type="text" name="description" placeholder="Descripción del Producto" value="${product.description}" style="display: block; margin-bottom: 15px; padding: 10px; width: 100%; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" required>
-        <input type="text" name="image" placeholder="URL de la Imagen" value="${product.image}" style="display: block; margin-bottom: 15px; padding: 10px; width: 100%; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" required>
-        <input type="text" name="category" placeholder="Categoría" value="${product.category}" style="display: block; margin-bottom: 15px; padding: 10px; width: 100%; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" required>
-        <input type="text" name="size" placeholder="Tamaño" value="${product.size}" style="display: block; margin-bottom: 15px; padding: 10px; width: 100%; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" required>
-        <input type="number" name="price" placeholder="Precio" value="${product.price}" style="display: block; margin-bottom: 15px; padding: 10px; width: 100%; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" required>
-        <button type="submit" style="background-color: #4CAF50; color: white; border: none; cursor: pointer; display: block; width: 100%; padding: 10px; border-radius: 5px;">Actualizar Producto</button>
+        <input type="text" name="name" placeholder="Nombre del Producto" value="${product.name}" style="display: block; margin-bottom: 15px; padding: 10px; width: 90%; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" required>
+        <input type="text" name="description" placeholder="Descripción del Producto" value="${product.description}" style="display: block; margin-bottom: 15px; padding: 10px; width: 90%; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" required>
+        <input type="text" name="image" placeholder="URL de la Imagen" value="${product.image}" style="display: block; margin-bottom: 15px; padding: 10px; width: 90%; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" required>
+        <input type="text" name="category" placeholder="Categoría" value="${product.category}" style="display: block; margin-bottom: 15px; padding: 10px; width: 90%; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" required>
+        <input type="text" name="size" placeholder="Tamaño" value="${product.size}" style="display: block; margin-bottom: 15px; padding: 10px; width: 90%; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" required>
+        <input type="number" name="price" placeholder="Precio" value="${product.price}" style="display: block; margin-bottom: 15px; padding: 10px; width: 90%; border: 1px solid #ccc; border-radius: 5px; font-size: 16px;" required>
+        <button type="submit" style="background-color: #4CAF50; color: white; border: none; cursor: pointer; display: block; width: 90%; padding: 10px; border-radius: 5px;">Actualizar Producto</button>
       </form>
     </div>`;
   res.send(html);
