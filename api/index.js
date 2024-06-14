@@ -10,19 +10,19 @@ const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const productRoutes = require("./routes/productRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
+const error = require("./middlewares/errorMiddleware");
 
 async function main() {
   await connectDB();
   const app = express();
 
+  app.use(error);
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(express.static("public"));
   app.use(methodOverride("_method"));
   app.use(cookieParser());
 
   app.get("/", (_req, res) => res.redirect("/products"));
-
-  // Proteger rutas que requieren autenticación
 
   //localhost:PORT/dashboard
   app.use("/dashboard", dashboardRoutes);
@@ -32,6 +32,8 @@ async function main() {
 
   //localhost:PORT/login
   app.use("/login", authRoutes);
+
+  app.use(error);
 
   const port = process.env.PORT || 5001;
 

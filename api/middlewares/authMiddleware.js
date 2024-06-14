@@ -12,6 +12,7 @@ const authenticateJWT = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (err) {
+    res.clearCookie("token");
     return res.status(403).send("Acceso denegado");
   }
 };

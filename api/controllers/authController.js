@@ -108,18 +108,20 @@ const login = async (req, res) => {
     res.cookie("token", token, { httpOnly: true });
     res.redirect("/dashboard"); // Redirige a la página deseada después de login
   } catch (err) {
+    console.log(err);
     res.status(500).send("Error del servidor");
   }
 };
 
 const logout = (req, res) => {
+  console.log("Logging out");
   res.clearCookie("token");
-  res.redirect("/auth/login");
+  console.log("Token cleared");
+  res.redirect("/login");
 };
 
 module.exports = {
   showLoginForm,
   login,
-
   logout,
 };
