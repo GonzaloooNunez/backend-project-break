@@ -16,7 +16,6 @@ async function main() {
   await connectDB();
   const app = express();
 
-  app.use(error);
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(express.static("public"));
   app.use(methodOverride("_method"));
